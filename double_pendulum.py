@@ -10,7 +10,7 @@ class DoublePenduium:
     def __init__(self):
         self.theta0=90
         self.frame=[]
-        self.g=2.0
+        self.g=9.8
         
     def func1(self,i,theta,vtheta):
         S=np.sin(theta[0]-theta[1])
@@ -25,11 +25,11 @@ class DoublePenduium:
         return vtheta[i]
     
         
-    def do(self):
-        fig=plt.figure()
-        ax=fig.add_subplot(111)
+    def do(self,theta1,theta2,filename):
+        ofile=open(filename,'w')
+        otxt=""
         
-        theta=np.array([np.pi/2.0,np.pi/2.0])#theta1,theta2
+        theta=np.array([theta1,theta2])#theta1,theta2
         vtheta=np.array([0.0,0.0])#vtheta1,vtheta2
         
         k1=np.array([0.0 for i in range(4)])
@@ -40,9 +40,9 @@ class DoublePenduium:
 
         self.frame=[]
         x=[]
-        h=0.001
+        h=0.0001
         
-        for i in xrange(200000):
+        for i in xrange(2000000):
             k1[0]=h*self.func1(0,theta,vtheta)
             k1[1]=h*self.func2(0,theta,vtheta)
             k1[2]=h*self.func1(1,theta,vtheta)
@@ -76,12 +76,21 @@ class DoublePenduium:
             theta=theta+np.array([kk[1],kk[3]])     #postion
             vtheta=vtheta+np.array([kk[0],kk[2]])     #velo
             #x.append(vtheta)
-            print 0,np.cos(theta[0]-np.pi/2),np.cos(theta[0]-np.pi/2)+np.cos(theta[1]-np.pi/2),0,np.sin(theta[0]-np.pi/2),np.sin(theta[0]-np.pi/2)+np.sin(theta[1]-np.pi/2)
-
-
+            if i%10==0:
+                otxt+="%lf %lf %lf %lf %lf %lf \n"% (0,np.cos(theta[0]-np.pi/2),np.cos(theta[0]-np.pi/2)+np.cos(theta[1]-np.pi/2),0,np.sin(theta[0]-np.pi/2),np.sin(theta[0]-np.pi/2)+np.sin(theta[1]-np.pi/2))
+                
+        ofile.write(otxt)
+        ofile.close()
+        
         #ax.plot(x)
         #plt.show()
         
 if __name__=='__main__':
     test=DoublePenduium()
-    test.do()
+    #for i in xrange(4,7):
+        #for j in xrange(7):
+    i=3
+    j=6
+    filename="dp"+str(i)+str(j)+".out"
+    print filename,i*np.pi/6,j*np.pi/6
+    test.do(i*np.pi/6,j*np.pi/6,filename)
